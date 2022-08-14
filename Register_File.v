@@ -15,8 +15,8 @@ always@ (*)
 begin
     if(!RST_RegFile)
     begin
-        signal_RD1 = 32'b0;
-        signal_RD2 = 32'b0;
+        signal_RD1 = 32'b0; RD1 = 32'b0;
+        signal_RD2 = 32'b0; RD2 = 32'b0;
         for (i=0; i<32; i=i+1)
         begin
             RegFile[i] = 32'b0;
@@ -32,7 +32,7 @@ end
 //writing stage (writing happen at first half cycle meaning at rising edge)
 always@ (posedge CLK_RegFile)
 begin
-    if(WE3)
+    if(WE3 && RST_RegFile)
     begin
         RegFile[A3] <= WD3;
     end
@@ -41,8 +41,11 @@ end
 //reading stage (reading happen at second half cycle meaning at falling edge)
 always@ (negedge CLK_RegFile)
 begin
-    RD1 <= signal_RD1;
-    RD2 <= signal_RD2;
+    if(RST_RegFile)
+    begin
+        RD1 <= signal_RD1;
+        RD2 <= signal_RD2;
+    end
 end
 
 endmodule
